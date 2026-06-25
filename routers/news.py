@@ -33,17 +33,20 @@ async def get_new_list(
         db = Depends(db_config.get_db),
 ):
     skip = (page - 1) * page_size
-    x= await news.get_news(db, category_id, skip, page_size)
+    new_list= await news.get_news(db, category_id, skip, page_size)
     #总量
-    y = await news.get_news_count(db, category_id, skip, page_size)
+    total = await news.get_news_count(db, category_id, skip, page_size)
+    #查hasmore 跳过的数量+当前页的数量是否小于总量
+    hostmore =  (skip + len(new_list)) > total
+
 
     return {
         'code': 200,
         'msg': "success",
         "data": {
-            "list": x,
-            "total": y,
-            "hasMore": "是否更多"
+            "list": skip,
+            "total": new_list,
+            "hasMore": hostmore,
                 }
     }
 
