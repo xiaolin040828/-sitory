@@ -42,8 +42,8 @@ async def get_new_list(
         'code': 200,
         'msg': "success",
         "data": {
-            "list": skip,
-            "total": new_list,
+            "list": new_list,
+            "total": total,
             "hasMore": has_more
                 }
     }
