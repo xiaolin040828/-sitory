@@ -27,5 +27,6 @@ class Category(Base):
     name: Mapped[str] = mapped_column(String(50), unique=True, nullable= False,comment= "分类名")
     sort_order: Mapped[int] = mapped_column(Integer, default= 0, nullable= False,comment= "排序")
 
-
+    def __repr__(self) -> str:
+        return f"<Category id={self.id} name={self.name} sort_order={self.sort_order}>"
 
