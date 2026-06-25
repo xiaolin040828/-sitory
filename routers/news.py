@@ -29,17 +29,23 @@ async def get_new_categories(skip: int = 0, limit: int = 100, db: AsyncSession =
 async def get_new_list(
         category_id: int = Query(..., alias="categoryId"),
         page: int = 1,
-        page_size: int = Query(default=10, alias="pageSize",le= 100),
+        page_size: int = Query(default=10, alias="pageSize",le= 100,),
+        db = Depends(db_config.get_db),
 ):
+    skip = (page - 1) * page_size
+    x= await news.get_news(db, category_id, skip, page_size)
+
     return {
         'code': 200,
         'msg': "success",
         "data": {
-            "list": '列表',
+            "list": x,
             "total": "总量",
             "hasMore": "是否更多"
                 }
     }
+
+
 
 
 
