@@ -3,9 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from config import db_config
 from crud import news
 
-
-news_router = APIRouter(prefix= "/api/router", tags=["news"])
-
+news_router = APIRouter(prefix="/api/news", tags=["news"])
 
 
 #接口实现流程
@@ -14,7 +12,7 @@ news_router = APIRouter(prefix= "/api/router", tags=["news"])
 #定义crud函数，封装到crud表
 #路由调用crud方法
 @news_router.get('/categories')
-async def get_categories(skip: int = 0, limit: int = 100, db: AsyncSession= Depends(db_config.get_db)):
+async def get_new_list(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(db_config.get_db)):
     #调用crud方法
     x = await news.get_categories(db, skip, limit)
     return {
@@ -22,5 +20,3 @@ async def get_categories(skip: int = 0, limit: int = 100, db: AsyncSession= Depe
         'mag': '类别获取成功',
         'data': x
     }
-
-

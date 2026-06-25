@@ -9,7 +9,7 @@ engine = create_async_engine(
     url = async_ad_url,
     echo=True,
     pool_size = 10,
-    max_overflow = 5,
+    max_overflow = 20,
 )
 
 #创建会话工厂
