@@ -34,13 +34,15 @@ async def get_new_list(
 ):
     skip = (page - 1) * page_size
     x= await news.get_news(db, category_id, skip, page_size)
+    #总量
+    y = await news.get_news_count(db, category_id, skip, page_size)
 
     return {
         'code': 200,
         'msg': "success",
         "data": {
             "list": x,
-            "total": "总量",
+            "total": y,
             "hasMore": "是否更多"
                 }
     }

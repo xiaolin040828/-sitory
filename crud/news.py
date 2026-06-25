@@ -1,8 +1,9 @@
 #创建新闻分页列表增删改查的方法
 
 from sqlalchemy.ext.asyncio import  AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from models import news
+from models.news import News
 
 
 #查新闻分页列表
@@ -18,4 +19,9 @@ async def get_news(db: AsyncSession, category_id: int, skip: int = 0, limit: int
     result = await  db.execute(db_news)
     return result.scalars().all()
 
+#查询指定分类新闻总量
+async def get_news_count(db: AsyncSession,category_id, skip: int = 0, limit: int = 10 ):
+    db_news = select(func.count(News.id)).where(News.category_id == category_id)
+    result = await db.execute(db_news)
+    return result.scalar_one_or_none()
 
