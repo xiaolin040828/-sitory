@@ -1,7 +1,7 @@
 #创建新闻分页列表增删改查的方法
 
 from sqlalchemy.ext.asyncio import  AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, update, values
 from models import news
 from models.news import News
 
@@ -30,3 +30,9 @@ async def get_news_detail(db: AsyncSession, news_id: int):
     stmt = select(News).where(News.id == news_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
+
+#浏览功能-------更改数据库的浏览量字段的数值
+async def update_news_view(db: AsyncSession, new_id: int):
+    stmt = update(News).where(News.id == new_id).values(viwes = News.views + 1)
+    await db.execute(stmt)
+    await db.commit()
