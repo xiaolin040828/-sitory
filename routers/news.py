@@ -58,7 +58,7 @@ async def get_news_detail(
   "code": 200,
   "message": "success",
   "data": {
-    "id": 1,
+    "id": detail_id,
     "title": "新闻标题",
     "content": "新闻内容",
     "image": 'null',
