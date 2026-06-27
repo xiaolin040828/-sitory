@@ -54,10 +54,13 @@ async def get_news_detail(
         db: AsyncSession = Depends(db_config.get_db)
 ):
     news_detail = await news.get_news_detail(db, news_id)
-    await news.update_news_views(db = db, new_id = news_detail.id)
-    relatednews = await news.get_relatedNews(db= db, news_id= news_detail.id)
     if not news_detail:
         raise HTTPException(status_code=404, detail="新闻不存在")
+
+    await news.update_news_views(db = db, new_id = news_detail.id)
+
+    relatednews = await news.get_relatedNews(db= db, news_id= news_detail.category_id)
+
 
     return {
         'code': 200,
