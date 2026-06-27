@@ -3,7 +3,7 @@
 from sqlalchemy.ext.asyncio import  AsyncSession
 from sqlalchemy import select, func, update, values
 from models import news
-from models.news import News
+from models.news import News, Category
 
 
 #查新闻分页列表
@@ -36,3 +36,25 @@ async def update_news_views(db: AsyncSession, new_id: int):
     stmt = update(News).where(News.id == new_id).values(views = News.views + 1)
     await db.execute(stmt)
     await db.commit()
+
+
+#获取相关类型的新闻
+async def get_relatedNews(db: AsyncSession, news_id: int, limit: int = 5):
+    stmt = select().where(News.id !=news_id, News.category_id == Category.id).order_by(News.views.desc()).limit(limit)
+    result = await db.execute(stmt)
+    return  result.scalars().all()
+    #列表推导式
+    # values = result.scalars().all()
+    # return [{
+    #     "id": i.id,
+    #     "title": i.title,
+    #     "content": i.content,
+    #     "image": i.image,
+    #     "author": i.author,
+    #     "publishTime": i.publishTime,
+    #     "categoryId": i.category_id,
+    #     "views": i.views,
+    # }for i in values]
+
+
+

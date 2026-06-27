@@ -55,6 +55,7 @@ async def get_news_detail(
 ):
     news_detail = await news.get_news_detail(db, news_id)
     await news.update_news_views(db = db, new_id = news_detail.id)
+    relatednews = await news.get_relatedNews(db= db, news_id= news_detail.id)
     if not news_detail:
         raise HTTPException(status_code=404, detail="新闻不存在")
 
@@ -70,7 +71,7 @@ async def get_news_detail(
             "publishTime": news_detail.publish_time,
             "categoryId": news_detail.category_id,
             "views": news_detail.views,
-            "relatedNews": []
+            "relatedNews": relatednews
         }
     }
 
