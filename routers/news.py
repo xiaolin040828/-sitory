@@ -49,6 +49,26 @@ async def get_new_list(
     }
 
 
+@news_router.get("/detail")
+async def get_news_detail(
+        detail_id: int = Query(..., alias="新闻ID"),
+        db: AsyncSession = Depends(db_config.get_db)
+):
+    return {
+  "code": 200,
+  "message": "success",
+  "data": {
+    "id": 1,
+    "title": "新闻标题",
+    "content": "新闻内容",
+    "image": 'null',
+    "author": 'null',
+    "publishTime": "2023-01-01T00:00:00",
+    "categoryId": 1,
+    "views": 1,
+    "relatedNews": []
+  }
+}
 
 
 
