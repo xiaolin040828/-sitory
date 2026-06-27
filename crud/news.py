@@ -32,7 +32,7 @@ async def get_news_detail(db: AsyncSession, news_id: int):
     return result.scalar_one_or_none()
 
 #浏览功能-------更改数据库的浏览量字段的数值
-async def update_news_view(db: AsyncSession, new_id: int):
-    stmt = update(News).where(News.id == new_id).values(viwes = News.views + 1)
+async def update_news_views(db: AsyncSession, new_id: int):
+    stmt = update(News).where(News.id == new_id).values(views = News.views + 1)
     await db.execute(stmt)
     await db.commit()
