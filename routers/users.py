@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from config import db_config
+from schemas.users import UserRequest
 
 users_router = APIRouter(
     prefix="/api/users",
@@ -10,7 +11,7 @@ users_router = APIRouter(
 
 
 @users_router.post("/register")
-async def post_register(user_data,db: AsyncSession = Depends(db_config.get_db)):  #用户信息，db
+async def post_register(user_data: UserRequest,db: AsyncSession = Depends(db_config.get_db)):  #用户信息，db
     return {
   "code": 200,
   "message": "注册成功",
