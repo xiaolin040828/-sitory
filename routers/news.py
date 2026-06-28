@@ -36,7 +36,7 @@ async def get_new_list(
     #总量
     total = await news.get_news_count(db, category_id, skip, page_size)
     #查has_more 跳过的数量+当前页的数量是否小于总量
-    has_more =  (skip + len(new_list)) > total
+    has_more =  (skip + len(new_list)) < total
     return {
         'code': 200,
         'msg': "success",
@@ -50,7 +50,7 @@ async def get_new_list(
 
 @news_router.get("/detail")
 async def get_news_detail(
-        news_id: int = Query(..., alias="新闻ID"),
+        news_id: int = Query(..., alias="id"),
         db: AsyncSession = Depends(db_config.get_db)
 ):
     news_detail = await news.get_news_detail(db, news_id)
@@ -59,7 +59,7 @@ async def get_news_detail(
 
     await news.update_news_views(db = db, new_id = news_detail.id)
 
-    relatednews = await news.get_relatedNews(db= db, news_id= news_detail.category_id)
+    relatednews = await news.get_relatedNews(db= db, news_id=news_detail.id,category_id=news_detail.category_id)
 
 
     return {

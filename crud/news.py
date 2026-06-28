@@ -39,8 +39,8 @@ async def update_news_views(db: AsyncSession, new_id: int):
 
 
 #获取相关类型的新闻
-async def get_relatedNews(db: AsyncSession, news_id: int, limit: int = 5):
-    stmt = select(News).where(News.id !=news_id, News.category_id == Category.id).order_by(News.views.desc()).limit(limit)
+async def get_relatedNews(db: AsyncSession, news_id: int, category_id = int ,limit: int = 5):
+    stmt = select(News).where(News.id !=news_id, News.category_id == category_id).order_by(News.views.desc()).limit(limit)
     result = await db.execute(stmt)
     return  result.scalars().all()
     #列表推导式
