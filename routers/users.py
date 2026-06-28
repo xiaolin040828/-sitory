@@ -19,7 +19,7 @@ async def post_register(user_data: UserRequest,db: AsyncSession = Depends(db_con
     "token": "用户访问令牌",
     "userInfo": {
       "id": 1,
-      "username": "example_user",
+      "username": user_data.username,
       "bio": "这个人很懒，什么都没留下",
       "avatar": "https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
     }
