@@ -5,13 +5,13 @@ from config import db_config
 from crud.users import get_users_username, create_user, create_token
 from schemas.users import UserRequest
 
-users_router = APIRouter(
-    prefix="/api/users",
+user_router = APIRouter(
+    prefix="/api/user",
     tags=["users"],
 )
 
 
-@users_router.post("/register")
+@user_router.post("/register")
 async def post_register(user_data: UserRequest,db: AsyncSession = Depends(db_config.get_db)): #用户信息，db
     existing_user = await  get_users_username(db= db, username= user_data.username )
     if existing_user:

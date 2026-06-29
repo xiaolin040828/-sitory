@@ -13,4 +13,4 @@ async def root():
 
 #挂载路由
 app.include_router(news.news_router)
-app.include_router(users.users_router)
+app.include_router(users.user_router)
