@@ -61,7 +61,6 @@ async def get_news_detail(
 
     relatednews = await news.get_relatedNews(db= db, news_id=news_detail.id,category_id=news_detail.category_id)
 
-
     return {
         'code': 200,
         'msg': "success",
