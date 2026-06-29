@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from config import db_config
-from crud.users import get_users_username, create_user
+from crud.users import get_users_username, create_user, create_token
 from schemas.users import UserRequest
 
 users_router = APIRouter(
@@ -17,12 +17,12 @@ async def post_register(user_data: UserRequest,db: AsyncSession = Depends(db_con
     if existing_user:
         raise HTTPException(status_code=400,detail="用户已经存在")
     return_user =  await create_user(db= db, user_data= user_data)
-
+    token = await create_token(db= db, user_id= return_user.id)
     return {
   "code": 200,
   "message": "注册成功",
   "data": {
-    "token": "用户访问令牌",
+    "token": token,
     "userInfo": {
       "id": return_user.id,
       "username": return_user.username,

@@ -18,8 +18,8 @@ async  def create_user(db: AsyncSession, user_data: UserRequest):
     psw_hash = await get_password_hash(user_data.password)
     user = User(username=user_data.username, password=psw_hash)
     db.add(user)
-    await db.refresh(user)
     await db.commit()
+    await db.refresh(user)
     return user
 
 #生成token
@@ -27,7 +27,7 @@ async def create_token(db: AsyncSession, user_id: int):
     token = str(uuid.uuid4())   #通过uuid方法生成token转字符串
     #token时间= 创建时间+ 7days
     expirse = datetime.now() + timedelta(days= 7)
-    stmt = select(UserToken).where(User.id == UserToken.user_id)
+    stmt = select(UserToken).where(UserToken.user_id == user_id)
     result = await db.execute(stmt)
     user_token = result.scalars().first()
     if user_token: #如过有token就更新时间
