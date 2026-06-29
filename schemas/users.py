@@ -18,7 +18,7 @@ class UserinfoResponse(Userinfo):
     username : str
 
     model_config = ConfigDict(
-        from_attributes=True
+        from_attributes=True #允许 Pydantic 从“对象属性（ORM模型）”读取数据
     )
 
 
@@ -28,4 +28,4 @@ class UserAuthResponse(BaseModel):
     #模型配置
     model_config = ConfigDict(
          populate_by_name=True,
-         from_attributes=True)
+         from_attributes=True) #alias 和字段名“双通道兼容”
