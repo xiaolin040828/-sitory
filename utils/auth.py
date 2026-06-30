@@ -6,7 +6,7 @@ from starlette import status
 from config.db_config import get_db
 from crud import users
 
-async def get_current_use(
+async def get_current_user(
         authorizationr: str = Header(..., alias= "Authorization"),
         db: AsyncSession = Depends(get_db)):
     token = authorizationr.replace("Bearer ", "")

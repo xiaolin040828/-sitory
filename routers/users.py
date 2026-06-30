@@ -5,7 +5,9 @@ from starlette import status
 
 from config import db_config
 from crud.users import get_users_username, create_user, create_token, authenticate_user
+from models.users import User
 from schemas.users import UserRequest, UserAuthResponse, UserinfoResponse
+from utils.auth import get_current_user
 from utils.response import success_response
 
 user_router = APIRouter(
@@ -53,5 +55,5 @@ async def post_login(user_data: UserRequest, db: AsyncSession = Depends(db_confi
 #封装一个方法查token，查用户)->功能整合成一个工具函数 ->登陆-》获取信息
 @user_router.get("/info")
 #验证token是否过期
-async def get_user_info():
-    return success_response(message="success")
+async def get_user_info(user: User = Depends(get_current_user)):
+    return success_response(message="success", data= UserinfoResponse.model_validate(user))
