@@ -1,6 +1,10 @@
 import uuid
 from datetime import datetime, timedelta
+
+from fastapi import Depends
 from sqlalchemy import select
+
+from config.db_config import get_db
 from schemas.users import UserRequest
 from models.users import User, UserToken
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,10 +57,10 @@ async def authenticate_user(db: AsyncSession, username: str, password: str):
 
 #根据token查询用户: 验证token -> 查询用户
 #整合了根据token查询用户并且判断token是否过期，查询用户信息
-async def get_user_by_token(db: AsyncSession, token: str):
+async def get_user_by_token(token: str, db: AsyncSession):
     query = select(UserToken).where(UserToken.token == token)
     result = await db.execute(query)
-    db_token = result.scalars().first()
+    db_token = result.scalar_one_or_none()
 
     if not db_token or db_token.expires_at < datetime.now():
         return None
