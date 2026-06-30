@@ -36,3 +36,7 @@ async def post_register(user_data: UserRequest,db: AsyncSession = Depends(db_con
     response_data = UserAuthResponse(token= token, userInfo= UserinfoResponse.model_validate(return_user))
     return success_response(message="success", data=response_data)
 
+#用户登陆路由
+@user_router.post("/login")
+async def post_login(user_data: UserRequest, db: AsyncSession = Depends(db_config.get_db)):
+    return user_data
