@@ -48,3 +48,10 @@ async def post_login(user_data: UserRequest, db: AsyncSession = Depends(db_confi
     token = await create_token(db= db, user_id= user.id)
     response_data = UserAuthResponse(token= token, userInfo= UserinfoResponse.model_validate(user))
     return success_response(message= "success", data= response_data)
+
+#获取用户信息
+#封装一个方法查token，查用户)->功能整合成一个工具函数 ->登陆-》获取信息
+@user_router.get("/info")
+#验证token是否过期
+async def get_user_info():
+    return success_response(message="success")
