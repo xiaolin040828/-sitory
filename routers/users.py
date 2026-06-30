@@ -57,3 +57,9 @@ async def post_login(user_data: UserRequest, db: AsyncSession = Depends(db_confi
 #验证token是否过期
 async def get_user_info(user: User = Depends(get_current_user)):
     return success_response(message="success", data= UserinfoResponse.model_validate(user))
+
+#修改用户信息
+@user_router.put("/update")
+async def update_user(user: User = Depends(get_current_user)):
+
+    return success_response(message="success", data= UserinfoResponse.model_validate(user))

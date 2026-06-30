@@ -29,3 +29,11 @@ class UserAuthResponse(BaseModel):
     model_config = ConfigDict(
          populate_by_name=True,
          from_attributes=True) #alias 和字段名“双通道兼容”
+
+
+#用于更改用户数据
+class Usersupdate(BaseModel):
+    nickname: Optional[str] = Field(None, description="昵称")
+    avatar: Optional[str] = Field(None, description="头像URL")
+    gender: Optional[str] = Field(None, description="性别")
+    phone: Optional[str] = Field(None, description="手机号")

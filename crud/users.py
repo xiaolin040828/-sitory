@@ -68,3 +68,7 @@ async def get_user_by_token(token: str, db: AsyncSession):
     query = select(User).where(User.id == db_token.user_id)
     result = await db.execute(query)
     return result.scalar_one_or_none()
+
+#修改用户信息
+async def update_current_user(db: AsyncSession):
+    
