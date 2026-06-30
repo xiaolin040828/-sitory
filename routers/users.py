@@ -1,8 +1,10 @@
 #创建users模块化路由
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
+
 from config import db_config
-from crud.users import get_users_username, create_user, create_token
+from crud.users import get_users_username, create_user, create_token, authenticate_user
 from schemas.users import UserRequest, UserAuthResponse, UserinfoResponse
 from utils.response import success_response
 
@@ -38,5 +40,11 @@ async def post_register(user_data: UserRequest,db: AsyncSession = Depends(db_con
 
 #用户登陆路由
 @user_router.post("/login")
+#登陆逻辑：验证用户账号是否存在-> 验证密码-> 生成token -> 响应结果
 async def post_login(user_data: UserRequest, db: AsyncSession = Depends(db_config.get_db)):
-    return user_data
+    user = await authenticate_user(db= db, username= user_data.username, password= user_data.password)
+    if not user:
+        raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,detail="用户账号或密码错误")
+    token = await create_token(db= db, user_id= user.id)
+    response_data = UserAuthResponse(token= token, userInfo= UserinfoResponse.model_validate(user))
+    return success_response(message= "success", data= response_data)

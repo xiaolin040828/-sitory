@@ -4,7 +4,7 @@ from sqlalchemy import select
 from schemas.users import UserRequest
 from models.users import User, UserToken
 from sqlalchemy.ext.asyncio import AsyncSession
-from utils.securty import get_password_hash
+from utils.securty import get_password_hash, verify_password
 
 #根据用户名获取用户数据
 async def get_users_username(db: AsyncSession, username: str):
@@ -15,7 +15,7 @@ async def get_users_username(db: AsyncSession, username: str):
 #创建用户
 async  def create_user(db: AsyncSession, user_data: UserRequest):
     #注册逻辑：查询数据库是否有同账号-》创建用户-〉生成token-》响应结果
-    psw_hash = await get_password_hash(user_data.password)
+    psw_hash = get_password_hash(user_data.password)
     user = User(username=user_data.username, password=psw_hash)
     db.add(user)
     await db.commit()
@@ -39,3 +39,13 @@ async def create_token(db: AsyncSession, user_id: int):
         await db.commit()
 
     return token
+
+#验证用户
+async def authenticate_user(db: AsyncSession, username: str, password: str):
+    user = await get_users_username(db, username)      #通过上面定义的获取用户
+    if not user:
+        return None
+    if not verify_password(plain_password= password, hashed_password= user.password):
+        return None
+
+    return user
