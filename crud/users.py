@@ -52,6 +52,7 @@ async def authenticate_user(db: AsyncSession, username: str, password: str):
 
 
 #根据token查询用户: 验证token -> 查询用户
+#整合了根据token查询用户并且判断token是否过期，查询用户信息
 async def get_user_by_token(db: AsyncSession, token: str):
     query = select(UserToken).where(UserToken.token == token)
     result = await db.execute(query)
