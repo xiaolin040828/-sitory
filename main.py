@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import news, users
+from routers import news, users, favorite
 #解决跨域问题
 from fastapi.middleware.cors import CORSMiddleware
 from utils.exception_response import register_exception_handlers
@@ -19,3 +19,4 @@ async def root():
 #挂载路由
 app.include_router(news.news_router)
 app.include_router(users.user_router)
+app.include_router(favorite.router)
