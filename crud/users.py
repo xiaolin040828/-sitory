@@ -8,6 +8,8 @@ from config.db_config import get_db
 from schemas.users import UserRequest, Usersupdate
 from models.users import User, UserToken
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from utils.auth import get_current_user
 from utils.securty import get_password_hash, verify_password
 
 #根据用户名获取用户数据
@@ -84,4 +86,24 @@ async def update_current_user(db: AsyncSession, user_data: Usersupdate, user_nam
 
     update_user = get_users_username(db, user_name) #获取成功后的数据
     return update_user  #返回
+
+#修改用户密码
+async def update_user_password(db: AsyncSession,
+                               old_password: str,
+                               new_password: str,
+                               user:User):
+    bool = verify_password(plain_password= old_password,
+                           hashed_password= user.password) #验证用户输入的密码与库里的密码是不是一样的
+    if not bool:
+        return False
+
+    hs_new_password = get_password_hash(password= new_password) #哈希加密过的新密码
+    #修改数据库密码
+    user.password = hs_new_password
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return True
+
+
 

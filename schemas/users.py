@@ -38,3 +38,7 @@ class Usersupdate(BaseModel):
     gender: Optional[str] = Field(None, description="性别")
     phone: Optional[str] = Field(None, description="手机号")
     bio: Optional[str] = Field(None, description="个人简介")
+
+class Users_password(BaseModel):
+    old_password: str = Field(..., alias="oldPassword", description="新密码")
+    new_password: str = Field(..., min_length= 6, alias="newPassword", description="久密码")

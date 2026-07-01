@@ -4,9 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from config import db_config
-from crud.users import get_users_username, create_user, create_token, authenticate_user, update_current_user
+from crud.users import get_users_username, create_user, create_token, authenticate_user, update_current_user, \
+    update_user_password
 from models.users import User
-from schemas.users import UserRequest, UserAuthResponse, UserinfoResponse, Usersupdate
+from schemas.users import UserRequest, UserAuthResponse, UserinfoResponse, Usersupdate, Users_password
 from utils.auth import get_current_user
 from utils.response import success_response
 
@@ -65,3 +66,18 @@ async def update_user(user_date: Usersupdate, #pydantic类型
                       db: AsyncSession = Depends(db_config.get_db)):    #获得session对话用于操作哦数据库
     user = await update_current_user(db= db, user_name= user.username,user_data= user_date) #执行crud语句
     return success_response(message="success", data= UserinfoResponse.model_validate(user)) #返回数据给前端
+
+#修改用户密码
+@user_router.put("/password")
+async def put_user_password(
+        user_password: Users_password,
+        db: AsyncSession = Depends(db_config.get_db),
+        user: User = Depends(get_current_user),
+):
+    res_chang_pwd = await update_user_password(db=db,
+                               old_password=user_password.old_password,
+                               new_password=user_password.new_password,
+                               user=user)
+    if not res_chang_pwd:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="修改密码错误")
+    return success_response(message="success",data= None)
