@@ -1,11 +1,11 @@
 import uuid
 from datetime import datetime, timedelta
 
-from fastapi import Depends
-from sqlalchemy import select
+from fastapi import Depends, HTTPException
+from sqlalchemy import select, update
 
 from config.db_config import get_db
-from schemas.users import UserRequest
+from schemas.users import UserRequest, Usersupdate
 from models.users import User, UserToken
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.securty import get_password_hash, verify_password
@@ -69,6 +69,19 @@ async def get_user_by_token(token: str, db: AsyncSession):
     result = await db.execute(query)
     return result.scalar_one_or_none()
 
-#修改用户信息
-async def update_current_user(db: AsyncSession):
-    
+#更新用户信息crud方法
+async def update_current_user(db: AsyncSession, user_data: Usersupdate, user_name): #2是pedantic类型，3是用户名用来查数据库
+    #model_dump是将pydantic对象转化为python的字典对象，**解包=去掉括号
+    query = update(User).where(User.username == user_name).values(**user_data.model_dump(
+        exclude_none=True,
+        exclude_unset=True #表示没传的不返回，是 None 的也不返回
+    ))
+    result = await db.execute(query)    #执行语句
+    await db.commit()   #提交事物
+
+    if result.rowcount == 0: #用于判断有没有数据被修改（或删除）成功。
+        raise HTTPException(status_code=404, detail="用户未找到")
+
+    update_user = get_users_username(db, user_name) #获取成功后的数据
+    return update_user  #返回
+

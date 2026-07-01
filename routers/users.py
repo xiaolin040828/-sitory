@@ -4,9 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from config import db_config
-from crud.users import get_users_username, create_user, create_token, authenticate_user
+from crud.users import get_users_username, create_user, create_token, authenticate_user, update_current_user
 from models.users import User
-from schemas.users import UserRequest, UserAuthResponse, UserinfoResponse
+from schemas.users import UserRequest, UserAuthResponse, UserinfoResponse, Usersupdate
 from utils.auth import get_current_user
 from utils.response import success_response
 
@@ -60,6 +60,8 @@ async def get_user_info(user: User = Depends(get_current_user)):
 
 #修改用户信息
 @user_router.put("/update")
-async def update_user(user: User = Depends(get_current_user)):
-
-    return success_response(message="success", data= UserinfoResponse.model_validate(user))
+async def update_user(user_date: Usersupdate, #pydantic类型
+                      user: User = Depends(get_current_user),   #验证token获取当前用户信息
+                      db: AsyncSession = Depends(db_config.get_db)):    #获得session对话用于操作哦数据库
+    user = await update_current_user(db= db, user_name= user.username,user_data= user_date) #执行crud语句
+    return success_response(message="success", data= UserinfoResponse.model_validate(user)) #返回数据给前端

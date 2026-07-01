@@ -37,3 +37,4 @@ class Usersupdate(BaseModel):
     avatar: Optional[str] = Field(None, description="头像URL")
     gender: Optional[str] = Field(None, description="性别")
     phone: Optional[str] = Field(None, description="手机号")
+    bio: Optional[str] = Field(None, description="个人简介")
