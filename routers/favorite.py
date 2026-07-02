@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 from config.db_config import get_db
 from crud.favorite import is_new_favorite
-from schemas.favorite import FavoriteCheckResponse
+from schemas.favorite import FavoriteCheckResponse, Favorite_userid
 from utils.auth import get_current_user
 from models.users import User
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,8 +25,8 @@ async def check_favorite(
 #添加收藏
 @router.post("/add")
 async def add_favorite(
+        news_id: Favorite_userid,
         db: AsyncSession = Depends(get_db),
-        news_id: int = Query(..., alias="newsId"),
         user: User = Depends(get_current_user),
 ):
     return success_response(message="success")
