@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field, ConfigDict
 
 from schemas.base import NewsItemBase
@@ -13,7 +15,7 @@ class Favorite_userid(BaseModel):
 
 class FavoriteNewsResponse(NewsItemBase):
     favorite_id: int = Field(..., alias="favoriteId")
-    favorite_time: int = Field(..., alias="favoriteTime")
+    favorite_time: datetime = Field(..., alias="favoriteTime")
 
     model_config = ConfigDict(
         populate_by_name=True,

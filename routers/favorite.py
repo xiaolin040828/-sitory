@@ -53,7 +53,7 @@ async def get_list_favorite(
         data: User = Depends(get_current_user),
 ):
     #调用方法
-    rows, total = get_favorite(db=db, user_id=data.id, page=page, page_size=page_size)
+    rows, total = await get_favorite(db=db, user_id=data.id, page=page, page_size=page_size)
     favorite_list = [{
         **news.__dict__,
         "favorite_id": favorite_id,
