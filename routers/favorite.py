@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 from config.db_config import get_db
-from crud.favorite import is_new_favorite, add_favorite, delete_favorite
-from schemas.favorite import FavoriteCheckResponse, Favorite_userid
+from crud.favorite import is_new_favorite, add_favorite, delete_favorite, get_favorite
+from schemas.favorite import FavoriteCheckResponse, Favorite_userid, FavoriteResponse
 from utils.auth import get_current_user
 from models.users import User
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -44,3 +44,21 @@ async def remove_news_favorite(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="收藏记录找不到")
     return success_response(message="success")
 
+#获取收藏列表
+@router.get("/list")
+async def get_list_favorite(
+        page: int = Query(default=1, ge= 1),
+        page_size: int = Query(default=10, ge= 1, le=100, alias="pageSize"),
+        db: AsyncSession = Depends(get_db),
+        data: User = Depends(get_current_user),
+):
+    #调用方法
+    rows, total = get_favorite(db=db, user_id=data.id, page=page, page_size=page_size)
+    favorite_list = [{
+        **news.__dict__,
+        "favorite_id": favorite_id,
+        "favorite_time": favorite_time,
+    }for news, favorite_time, favorite_id in rows]
+    hasmore = total > page * page_size
+    data = FavoriteResponse(list= favorite_list, total= total, hasMore= hasmore)
+    return success_response(message="收藏列表获取成功", data=data)
