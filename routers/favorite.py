@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 from config.db_config import get_db
-from crud.favorite import is_new_favorite, add_favorite, delete_favorite, get_favorite
+from crud.favorite import is_new_favorite, add_favorite, delete_favorite, get_favorite, clear_favorite
 from schemas.favorite import FavoriteCheckResponse, Favorite_userid, FavoriteResponse
 from utils.auth import get_current_user
 from models.users import User
@@ -62,3 +62,12 @@ async def get_list_favorite(
     hasmore = total > page * page_size
     data = FavoriteResponse(list= favorite_list, total= total, hasMore= hasmore)
     return success_response(message="收藏列表获取成功", data=data)
+
+#清空收藏列表
+@router.delete("/clear")
+async def clear_favorite_list(
+        db: AsyncSession = Depends(get_db),
+        data: User = Depends(get_current_user),
+):
+    rowcount = await clear_favorite(db=db, user_id=data.id)
+    return success_response(message=f"收藏列表清空{rowcount}条数据")

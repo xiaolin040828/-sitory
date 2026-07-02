@@ -57,7 +57,12 @@ async def get_favorite(db: AsyncSession, user_id: int, page: int = 1, page_size:
     rows = result.all()# 元祖类型
     return rows, total
 
-
+#清空收藏列表
+async def clear_favorite(db: AsyncSession, user_id: int, ):
+    query = Delete(Favorite).where(Favorite.user_id == user_id)
+    result = await db.execute(query)
+    await db.commit()
+    return result.rowcount
 
 
 
