@@ -6,4 +6,4 @@ class FavoriteCheckResponse(BaseModel):
 
 #添加请求题类型
 class Favorite_userid(BaseModel):
-    user_id: int = Field(..., alias="userId")
+    news_id: int = Field(..., alias="newsId")

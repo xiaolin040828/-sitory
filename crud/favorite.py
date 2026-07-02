@@ -1,10 +1,10 @@
 
-from sqlalchemy import select
+from sqlalchemy import select, Delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.sync import update
 
 from models.favorite import Favorite
-from schemas.favorite import Favorite_userid
+
 
 
 #检查收藏状态：当前用户是否收藏了这条新闻
@@ -21,8 +21,8 @@ async def is_new_favorite(
 #添加收藏
 async def add_favorite(
         db: AsyncSession,
-        user_id,
-        news_id
+        user_id: int,
+        news_id: int
 ):
     favorite_add = Favorite(user_id=user_id, news_id=news_id)
     db.add(favorite_add)
@@ -32,7 +32,7 @@ async def add_favorite(
 
 #取消收藏
 async def delete_favorite(db: AsyncSession, news_id: int, user_id: int):
-    orm = update(Favorite).where(Favorite.user_id == user_id, Favorite.news_id == news_id)
+    orm = Delete(Favorite).where(Favorite.user_id == user_id, Favorite.news_id == news_id)
     result = await db.execute(orm)
     await db.commit()
     return result.rowcount > 0

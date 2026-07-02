@@ -29,17 +29,18 @@ async def add_news_favorite(
         db: AsyncSession = Depends(get_db),
         user: User = Depends(get_current_user),
 ):
-    favorite = add_favorite(db=db, user_id=user.id, news_id=news_id)
+    favorite = await add_favorite(db=db, user_id=user.id, news_id=news_id.news_id)
     return success_response(message="success",data= favorite)
 
 #取消收藏
 @router.delete("/remove")
 async def remove_news_favorite(
-        news_id: Favorite_userid,
+        news_id: int = Query(...,alias= "newsId"),
         db: AsyncSession = Depends(get_db),
         user: User = Depends(get_current_user),
 ):
-    result = await delete_favorite(db=db, news_id= news_id.user_id, user_id=user.id)
+    result = await delete_favorite(db=db, news_id= news_id, user_id=user.id)
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="收藏记录找不到")
     return success_response(message="success")
+
