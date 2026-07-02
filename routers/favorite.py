@@ -21,3 +21,12 @@ async def check_favorite(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户没有收藏")
 
     return success_response(message= "查询成功", data=FavoriteCheckResponse(isFavorite=bool))
+
+#添加收藏
+@router.post("/add")
+async def add_favorite(
+        db: AsyncSession = Depends(get_db),
+        news_id: int = Query(..., alias="newsId"),
+        user: User = Depends(get_current_user),
+):
+    return success_response(message="success")
