@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.users import User
 from config.db_config import get_db
 from schemas.history import History_newsid, HistoryAddResponse, HistoryListResponse
 from utils.auth import get_current_user
 from utils.response import success_response
-from crud.history import add_history, get_history
+from crud.history import add_history, get_history, delete_history, clear_history
+
 router = APIRouter(prefix="/api/history", tags=["history"])
 
 #添加历史记录
@@ -37,3 +38,24 @@ async def get_history_list(
     } for news, history_id, view_time in history]
     data = HistoryListResponse(list=history_list, total=total, hasMore=hasmore)
     return success_response(message="获取成功", data=data)
+
+
+@router.delete("/delete/{history_id}")
+async def delete_delete_history(
+        history_id: int,
+        user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db),
+):
+    row = await delete_history(history_id=history_id, db=db, user_id=user.id)
+    if row == 0:
+        raise HTTPException(status_code=400, detail="没找到数据")
+    return success_response(message="删除历史记录成功")
+
+
+@router.delete("/clear")
+async def cleat_clear_history(
+        user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db),
+):
+    result = await clear_history(db=db, user_id=user.id)
+    return success_response(message=f"清除成功,清空{result}")

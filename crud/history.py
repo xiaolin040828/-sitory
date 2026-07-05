@@ -1,4 +1,4 @@
-from sqlalchemy import select, func
+from sqlalchemy import select, func, Delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.history import History
 from models.news import News
@@ -35,3 +35,24 @@ async def get_history(
     history = await db.execute(query)
     history = history.all()
     return history, total
+
+#删除单条历史记录功能
+async def delete_history(
+        user_id: int,
+        history_id: int,
+        db: AsyncSession,
+):
+    history_delete = Delete(History).where(History.user_id == user_id, History.id == history_id)
+    result = await db.execute(history_delete)
+    await db.commit()
+    return result.rowcount
+
+
+async def clear_history(
+        user_id: int,
+        db: AsyncSession,
+):
+    history_delete = Delete(History).where(History.user_id == user_id)
+    result = await db.execute(history_delete)
+    await db.commit()
+    return result.rowcount
