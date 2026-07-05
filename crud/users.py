@@ -84,7 +84,7 @@ async def update_current_user(db: AsyncSession, user_data: Usersupdate, user_nam
     if result.rowcount == 0: #用于判断有没有数据被修改（或删除）成功。
         raise HTTPException(status_code=404, detail="用户未找到")
 
-    update_user = get_users_username(db, user_name) #获取成功后的数据
+    update_user = await get_users_username(db, user_name) #获取成功后的数据
     return update_user  #返回
 
 #修改用户密码

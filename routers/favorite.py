@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 from config.db_config import get_db
 from crud.favorite import is_new_favorite, add_favorite, delete_favorite, get_favorite, clear_favorite
-from schemas.favorite import FavoriteCheckResponse, Favorite_userid, FavoriteResponse
+from schemas.favorite import FavoriteCheckResponse, Favorite_userid, FavoriteResponse, FavoriteAddResponse
 from utils.auth import get_current_user
 from models.users import User
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,7 +30,8 @@ async def add_news_favorite(
         user: User = Depends(get_current_user),
 ):
     favorite = await add_favorite(db=db, user_id=user.id, news_id=news_id.news_id)
-    return success_response(message="success",data= favorite)
+    data = FavoriteAddResponse.model_validate(favorite)
+    return success_response(message="success", data=data)
 
 #取消收藏
 @router.delete("/remove")
@@ -56,8 +57,8 @@ async def get_list_favorite(
     rows, total = await get_favorite(db=db, user_id=data.id, page=page, page_size=page_size)
     favorite_list = [{
         **news.__dict__,
-        "favorite_id": favorite_id,
         "favorite_time": favorite_time,
+        "favorite_id": favorite_id,
     }for news, favorite_time, favorite_id in rows]
     hasmore = total > page * page_size
     data = FavoriteResponse(list= favorite_list, total= total, hasMore= hasmore)

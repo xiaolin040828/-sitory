@@ -23,6 +23,17 @@ class FavoriteNewsResponse(NewsItemBase):
     )
 
 
+class FavoriteAddResponse(BaseModel):
+    id: int
+    news_id: int = Field(alias="newsId")
+    created_at: datetime = Field(alias="createdAt")
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        from_attributes=True,
+    )
+
+
 #定义收藏类表响应的模型类
 class FavoriteResponse(BaseModel):
     list: list[FavoriteNewsResponse]
@@ -33,4 +44,3 @@ class FavoriteResponse(BaseModel):
         populate_by_name= True,
         from_attributes= True,
     )
-
