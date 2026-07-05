@@ -57,9 +57,9 @@ async def get_list_favorite(
     rows, total = await get_favorite(db=db, user_id=data.id, page=page, page_size=page_size)
     favorite_list = [{
         **news.__dict__,
-        "favorite_time": favorite_time,
         "favorite_id": favorite_id,
-    }for news, favorite_time, favorite_id in rows]
+        "favorite_time": favorite_time,
+    }for news, favorite_id, favorite_time in rows]
     hasmore = total > page * page_size
     data = FavoriteResponse(list= favorite_list, total= total, hasMore= hasmore)
     return success_response(message="收藏列表获取成功", data=data)

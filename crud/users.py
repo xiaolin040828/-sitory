@@ -42,7 +42,7 @@ async def create_token(db: AsyncSession, user_id: int):
     else:   #如果没有就添加新的token到db
         user_token = UserToken(user_id = user_id, token = token, expires_at = expirse)
         db.add(user_token)
-        await db.commit()
+    await db.commit()
 
     return token
 
